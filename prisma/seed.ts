@@ -6,9 +6,10 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('🌱 Đang gieo mầm dữ liệu (Seed Data)...');
 
-  // 1. Seed User mặc định
   const hashedPassword = await bcrypt.hash('123456', 10);
-  const user = await prisma.user.upsert({
+
+  // 1. Seed User Admin
+  const adminUser = await prisma.user.upsert({
     where: { email: 'admin@gmail.com' },
     update: {},
     create: {
@@ -17,9 +18,21 @@ async function main() {
       name: 'ShopAI Admin',
     },
   });
-  console.log('✅ Seed User thành công:', user.email);
+  console.log('✅ Seed Admin User thành công:', adminUser.email);
 
-  // 2. Seed 20 sản phẩm ổn định
+  // 2. Seed User Client
+  const clientUser = await prisma.user.upsert({
+    where: { email: 'client@gmail.com' },
+    update: {},
+    create: {
+      email: 'client@gmail.com',
+      password: hashedPassword,
+      name: 'Khách Hàng ShopAI',
+    },
+  });
+  console.log('✅ Seed Client User thành công:', clientUser.email);
+
+  // 3. Seed 20 sản phẩm
   const products = [
     {
       id: 'prod_0',
